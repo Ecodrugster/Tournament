@@ -1,0 +1,13 @@
+{
+  "name": "Premier League 2024–25 · демо",
+  "matches": [
+    {"round":"Matchday 1","date":"2024-08-16","team1":"Manchester United FC","team2":"Fulham FC","score":{"ft":[1,0],"ht":[0,0]}},
+    {"round":"Matchday 1","date":"2024-08-17","team1":"Ipswich Town FC","team2":"Liverpool FC","score":{"ft":[0,2],"ht":[0,0]}},
+    {"round":"Matchday 1","date":"2024-08-17","team1":"Arsenal FC","team2":"Wolverhampton Wanderers FC","score":{"ft":[2,0],"ht":[1,0]}},
+    {"round":"Matchday 1","date":"2024-08-17","team1":"Everton FC","team2":"Brighton and Hove Albion","score":{"ft":[0,3],"ht":[0,1]}},
+    {"round":"Matchday 2","date":"2024-08-24","team1":"Brighton and Hove Albion","team2":"Manchester United FC","score":{"ft":[2,1],"ht":[1,0]}},
+    {"round":"Matchday 2","date":"2024-08-25","team1":"Liverpool FC","team2":"Brentford FC","score":{"ft":[2,0],"ht":[1,0]}},
+    {"round":"Matchday 2","date":"2024-08-25","team1":"Aston Villa FC","team2":"Arsenal FC","score":{"ft":[0,2],"ht":[0,0]}},
+    {"round":"Matchday 3","date":"2024-08-31","team1":"Arsenal FC","team2":"Brighton and Hove Albion","score":{"ft":[1,1],"ht":[1,0]}}
+  ]
+}

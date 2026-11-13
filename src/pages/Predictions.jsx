@@ -1,0 +1,15 @@
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { getSeason } from '../api/football.js';
+import mini from '../lib/fixtures/mini.json';
+import { useUserData } from '../state/UserData.jsx';
+function keyFor(match) { return `${match.date || ''}|${match.team1}|${match.team2}`; }
+function isFuture(match) { return !match.score?.ft; }
+function scorePoints(prediction, actual) { if (!prediction || !actual) return 0; const [p1, p2] = prediction.split(':').map(Number); const [a1, a2] = actual; return p1 === a1 && p2 === a2 ? 3 : Math.sign(p1 - p2) === Math.sign(a1 - a2) ? 1 : 0; }
+export default function Predictions() {
+  const { state, dispatch } = useUserData(); const [matches, setMatches] = useState([]); const [status, setStatus] = useState('loading'); const [inputs, setInputs] = useState({});
+  useEffect(() => { getSeason('en.1', '2025-26').then((data) => { setMatches(data.matches); setStatus('ready'); }).catch(() => { getSeason('en.1', '2024-25').then((data) => { setMatches(data.matches); setStatus('ready'); }).catch(() => { setMatches(mini.matches); setStatus('demo'); }); }); }, []);
+  const upcoming = useMemo(() => matches.filter(isFuture).slice(0, 20), [matches]);
+  const scored = Object.entries(state.predictions).map(([key, score]) => { const match = matches.find((item) => keyFor(item) === key); return match?.score?.ft ? scorePoints(score, match.score.ft) : 0; });
+  return <><div className="breadcrumb"><Link to="/">Лиги</Link><span>/</span><span>Мои прогнозы</span></div><section className="page-title"><div className="eyebrow"><span className="eyebrow-line"/> СЕЗОН 2025 / 26</div><h1>Твой взгляд <em>на игру.</em></h1><p>Прогнозируй счёт до стартового свистка. Точный счёт — 3 очка, исход — 1.</p></section><div className="prediction-score"><span>ВАШ СЧЁТ</span><b>{scored.reduce((sum, points) => sum + points, 0)}</b><small>{Object.keys(state.predictions).length} ПРОГНОЗОВ</small></div>{status === 'loading' ? <div className="notice">Ищем предстоящие матчи…</div> : upcoming.length ? <div className="prediction-list">{upcoming.map((match) => { const key = keyFor(match); const value = inputs[key] ?? state.predictions[key] ?? ''; return <form className="prediction-row" key={key} onSubmit={(event) => { event.preventDefault(); if (/^\d{1,2}:\d{1,2}$/.test(value)) dispatch({ type: 'setPrediction', key, score: value }); }}><div className="prediction-match"><span>{match.date || 'ДАТА УТОЧНЯЕТСЯ'}</span><b>{match.team1.replace(/ FC$| AFC$/, '')}</b><small>—</small><b>{match.team2.replace(/ FC$| AFC$/, '')}</b></div><input aria-label={`Прогноз ${match.team1}`} inputMode="numeric" placeholder="0:0" value={value} onChange={(event) => setInputs((current) => ({ ...current, [key]: event.target.value }))}/><button type="submit">СОХРАНИТЬ ↗</button></form>; })}</div> : <div className="empty-state"><span>◷</span><h2>Следующий тур ещё впереди.</h2><p>Когда появятся матчи без результата, здесь можно будет оставить прогноз.</p>{status === 'demo' && <small>Предстоящий сезон недоступен; открыт демонстрационный архив.</small>}</div>}</>;
+}
